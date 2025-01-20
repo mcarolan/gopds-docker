@@ -27,9 +27,8 @@ jobs:
 
       - name: Build and Push Multi-Arch Image
         run: |
-          # Replace "myuser/dir2opds" with your actual Docker Hub username/repo
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
-            --tag ${{ secrets.DOCKERHUB_USERNAME }}/dir2opds:latest \
+            --tag ${{ secrets.DOCKERHUB_USERNAME }}/dir2opds-docker:latest \
             .
