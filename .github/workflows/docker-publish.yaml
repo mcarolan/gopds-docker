@@ -1,9 +1,9 @@
-name: Build and Push to Docker Hub
+name: Build and Push Multi-Arch dir2opds
 
 on:
   push:
     branches:
-      - main
+      - main  # or whatever branch you wish
   pull_request:
 
 jobs:
@@ -14,11 +14,22 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build the Docker image
-        run: docker build -t mcarolan/gopds-docker:latest .
-
-      - name: Push to Docker Hub
-        run: docker push mcarolan/gopds-docker:latest
+      - name: Build and Push Multi-Arch Image
+        run: |
+          # Replace "myuser/dir2opds" with your actual Docker Hub username/repo
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --push \
+            --tag ${{ secrets.DOCKERHUB_USERNAME }}/dir2opds:latest \
+            .
